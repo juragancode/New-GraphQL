@@ -4,8 +4,9 @@ const server = new GraphQLServer({
   typeDefs: /* dalam GraphQL apabila field diisi tanda seru (Exclamation mark !) tidak boleh bernilai null */ `
       type Query {
         greeting(name: String, position: String): String!
-        add(a: Float, b: Float): Float
+        add(numbers: [Float!]!): Float!
         me: User! 
+        grades: [Int!]! 
         post: Post!
       }
 
@@ -33,8 +34,15 @@ const server = new GraphQLServer({
         }
       },
       add(parent, args, ctx, info) {
-        return args.a + args.b;
+        if (args.numbers.length === 0) {
+          return 0;
+        }
+
+        return args.numbers.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue;
+        });
       },
+      grades: () => [99, 80, 93],
       me: () => ({
         id: 234214380732865895,
         name: 'Alicia Visenya',
